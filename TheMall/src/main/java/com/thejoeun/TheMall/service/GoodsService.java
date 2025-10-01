@@ -18,3 +18,6 @@ public class GoodsService {
         return goodsMapper.getAllGoods();
     }
 }
+
+
+
