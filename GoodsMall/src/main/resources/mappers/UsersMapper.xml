@@ -12,6 +12,7 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="email" column="email"/>
+        <result property="password" column="password"/>
         <result property="role" column="role"/>
         <result property="create_at" column="created_at"/>
         <result property="update_at" column="updated_at"/>
@@ -33,8 +34,8 @@
 
     <!-- 사용자 등록 -->
     <insert id="insertUsers" parameterType="edu.the.joeun.model.Users">
-        INSERT INTO user (name, email, role)
-        VALUES(#{name}, #{email}, #{role}) <!-- Java 변수명 작성 -->
+        INSERT INTO user (name, email, password, role)
+        VALUES(#{name}, #{email}, #{password}, #{role}) <!-- Java 변수명 작성 -->
         <!-- id, created_at, updated_at 은 SQL 자체에서 데이터 알아서 삽입하므로
         사용자가 작성한 데이터를 기입하지 않는다. -->
     </insert>
