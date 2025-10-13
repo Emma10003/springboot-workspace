@@ -13,6 +13,7 @@
         <result property="name" column="name"/>
         <result property="price" column="price"/>
         <result property="stock" column="stock"/>
+        <result property="category" column="category"/>
     </resultMap>
 
     <!-- <resultMap> 의 id를 입력 -->
@@ -30,8 +31,8 @@
     </select>
 
     <insert id="insertGoods" parameterType="edu.the.joeun.model.Goods">
-        INSERT INTO goods (name, price, stock)
-        values(#{name}, #{price}, #{stock})  <!-- Java 변수명은 #{} 안에 작성! -->
+        INSERT INTO goods (name, price, stock, category)
+        values(#{name}, #{price}, #{stock}, #{category})  <!-- Java 변수명은 #{} 안에 작성! -->
     </insert>
 
     <!--

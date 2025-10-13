@@ -233,6 +233,32 @@
                 <div class="input-hint">초기 재고 수량을 입력하세요</div>
             </div>
 
+            <div class="form-group">
+                <label>
+                    카테고리<span class="required">*</span>
+                </label>
+                <label>
+                    <input type="radio" name="category" value="Electronics">
+                    전자제품
+                </label>
+                <label>
+                    <input type="radio" name="category" value="Household Goods">
+                    생활용품
+                </label>
+                <label>
+                    <input type="radio" name="category" value="Fashion">
+                    패션
+                </label>
+                <label>
+                    <input type="radio" name="category" value="Accessories">
+                    잡화
+                </label>
+                <label>
+                    <input type="radio" name="category" value="Others">
+                    기타
+                </label>
+            </div>
+
             <div class="button-group">
                 <button type="submit" class="btn-submit">
                     등록하기
@@ -252,9 +278,15 @@
         const name = document.getElementById('name').value.trim();
         const price = parseInt(document.getElementById('price').value);
         const stock = parseInt(document.getElementById('stock').value);
+        const category = document.querySelector('input[name="category"]:checked').value.trim();
 
         if (!name) {
             showAlert('error', '상품명을 입력해주세요.');
+            return;
+        }
+
+        if(!category) {
+            showAlert('error', '카테고리를 선택해주세요.')
             return;
         }
 
@@ -271,7 +303,8 @@
         const goodsData = {
             name: name,
             price: price,
-            stock: stock
+            stock: stock,
+            category: category
         };
 
         const submitBtn = event.target.querySelector('.btn-submit');
