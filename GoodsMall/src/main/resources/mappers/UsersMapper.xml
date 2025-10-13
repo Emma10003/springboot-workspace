@@ -6,25 +6,37 @@
 
 <mapper namespace="edu.the.joeun.mapper.UsersMapper">
 
-    <resultMap id="usersMap" type="edu.the.joeun.model.Users">
+    <resultMap id="resultUser" type="edu.the.joeun.model.Users">
+        <!-- Java의 변수명칭과 SQL의 컬럼명 일치시키기 -->
+        <!-- Config 설정 후에는 <resultMap> 사용 안 함 -->
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="email" column="email"/>
         <result property="role" column="role"/>
-        <result property="created_at" column="created_at"/>
-        <result property="updated_at" column="updated_at"/>
+        <result property="create_at" column="created_at"/>
+        <result property="update_at" column="updated_at"/>
     </resultMap>
+
     <!-- 모든 사용자 조회 -->
-    <select id="getAllUsers" resultMap="usersMap">
+    <select id="getAllUsers" resultMap="resultUser">
         SELECT *
         FROM user
         ORDER BY id DESC
     </select>
 
+    <!-- id로 사용자 조회 -->
+    <select id="getUserById" parameterType="int" resultMap="resultUser">
+        SELECT *
+        FROM user
+        WHERE = #{id}
+    </select>
+
     <!-- 사용자 등록 -->
     <insert id="insertUsers" parameterType="edu.the.joeun.model.Users">
         INSERT INTO user (name, email, role)
-        values(#{name}, #{email}, #{role})
+        VALUES(#{name}, #{email}, #{role}) <!-- Java 변수명 작성 -->
+        <!-- id, created_at, updated_at 은 SQL 자체에서 데이터 알아서 삽입하므로
+        사용자가 작성한 데이터를 기입하지 않는다. -->
     </insert>
 
 </mapper>

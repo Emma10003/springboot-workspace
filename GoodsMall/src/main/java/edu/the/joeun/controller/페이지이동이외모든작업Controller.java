@@ -1,7 +1,9 @@
 package edu.the.joeun.controller;
 
 import edu.the.joeun.model.Goods;
+import edu.the.joeun.model.Users;
 import edu.the.joeun.service.GoodsService;
+import edu.the.joeun.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +42,9 @@ public class 페이지이동이외모든작업Controller {
     // @Service 와 그에 해당하는 주소 설정
     @Autowired
     private GoodsService goodsService;
+
+    @Autowired
+    private UsersService usersService;  // service.UsersService 가져온 것
 
     /**
      * 모든 상품 목록을 조회하는 API
@@ -105,8 +110,29 @@ public class 페이지이동이외모든작업Controller {
     public void insertGoods(@RequestBody Goods goods){
         goodsService.insertGoods(goods);
     }
-    /*
+
+
+    /**
+     * 유저 정보를 등록하는 API<br>
+     * /api/users -> POST 일 경우 유저를 등록하는 공간으로, 유저 등록 시작
+     *
+     * @param users = html -> JS 로 가져온 유저 정보 데이터를 모두 json 형태로 설정
+     *                @RequestBody 를 이용해서   JS 형태 -> JSON 형태 설정
+     */
     @PostMapping("/api/users")
-    public 반환 메서드명칭
-    */
+    public void insertUser(@RequestBody Users users){
+        usersService.insertUsers(users);
+    }
+
+    /**
+     * /api/users -> GET 일 경우 모든 유저를 조회하는 공간으로, 유저 조회 시작
+     * 단순히 JS -> HTML 로 유저 데이터를 SQL에서 전달하는 것이기 때문에
+     * 매개변수와 파라미터는 빈 값 형태
+     * @return MyBatis에 작성된 SQL -> mapper 에서 조회 후, service 로 전달해온 데이터를
+     *         JS -> HTML 로 반환하여, 클라이언트가 모든 유저 목록을 조회할 수 있도록 설정
+     */
+    @GetMapping("/api/users")
+    public List<Users> getAllUsers(){
+        return usersService.getAllUsers();
+    }
 }

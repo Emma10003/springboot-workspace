@@ -13,21 +13,16 @@ public class UsersService {
     @Autowired
     private UsersMapper usersMapper;
 
-    /**
-     * 모든 유저 정보 조회
-     * 
-     * @return SQL에서 가져온 유저 목록(List<Users>)을 반환하여
-     *         반환된 상품 목록 조회 가능
-     */
     public List<Users> getAllUsers(){
         return usersMapper.getAllUsers();
     }
 
-    /**
-     * 전달받은 유저 정보를 DB에 저장
-     * @param users
-     */
+
     public void insertUsers(Users users){
+        /**
+         * 비밀번호 암호화 같은 복합 작업 진행하는 공간
+         * 프로필 사진을 폴더에 저장하고 폴더 경로도 DB에 저장 가능
+         */
         usersMapper.insertUsers(users);
     }
 }
