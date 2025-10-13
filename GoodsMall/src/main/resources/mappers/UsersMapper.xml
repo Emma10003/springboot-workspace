@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.the.joeun.mapper.UsersMapper">
+
+    <resultMap id="usersMap" type="edu.the.joeun.model.Users">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+    </resultMap>
+    <!-- 모든 사용자 조회 -->
+    <select id="getAllUsers" resultMap="usersMap">
+        SELECT *
+        FROM user
+        ORDER BY id DESC
+    </select>
+
+    <!-- 사용자 등록 -->
+    <insert id="insertUsers" parameterType="edu.the.joeun.model.Users">
+        INSERT INTO user (name, email, role)
+        values(#{name}, #{email}, #{role})
+    </insert>
+
+</mapper>
