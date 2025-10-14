@@ -56,4 +56,13 @@ public class 페이지이동Controller {
     public String 사용자등록(){
         return "사용자등록";
     }
+
+    /**
+     * memberAdd.html 을 반환하는 endpoint
+     * @return - memberAdd.html 을 반환
+     */
+    @GetMapping("/member/add")
+    public String getMemberAdd(){
+        return "memberAdd";
+    }
 }

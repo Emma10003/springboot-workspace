@@ -1,8 +1,10 @@
 package edu.the.joeun.controller;
 
 import edu.the.joeun.model.Goods;
+import edu.the.joeun.model.Member;
 import edu.the.joeun.model.Users;
 import edu.the.joeun.service.GoodsService;
+import edu.the.joeun.service.MemberService;
 import edu.the.joeun.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,9 @@ public class 페이지이동이외모든작업Controller {
 
     @Autowired
     private UsersService usersService;  // service.UsersService 가져온 것
+
+    @Autowired
+    private MemberService memberService;
 
     /**
      * 모든 상품 목록을 조회하는 API
@@ -134,5 +139,23 @@ public class 페이지이동이외모든작업Controller {
     @GetMapping("/api/users")
     public List<Users> getAllUsers(){
         return usersService.getAllUsers();
+    }
+
+    /**
+     * 멤버를 조회하므로 GetMapping
+     */
+    /*
+    @GetMapping("/api/member")
+    public List<Member> getAllMembers(){
+        return memberService.getAllMembers();
+    }
+    */
+
+    /**
+     * 멤버를 등록하므로 PostMapping
+     */
+    @PostMapping("/api/member/add")
+    public void insertMember(@RequestBody Member member){
+        memberService.insertMembers(member);
     }
 }
