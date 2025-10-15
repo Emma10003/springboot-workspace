@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MemberAPIController {
 
-    // PostMapping 으로 데이터 저장 시작
 
     @Autowired
     private MemberService memberService;
@@ -39,8 +38,11 @@ public class MemberAPIController {
      * 저장된 데이터를 기반으로 service 기능 시작 후
      * service 기능에 대한 결과 유무를 클라이언트에게 전달
      */
+
+    // PostMapping 으로 데이터 저장 시작
     @PostMapping("/api/member/add")
     public void saveMember(@RequestBody Member member){
         memberService.saveMember(member);
     }
 }
+
