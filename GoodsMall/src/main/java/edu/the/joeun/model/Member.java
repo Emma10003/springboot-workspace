@@ -18,6 +18,6 @@ public class Member {
     private String email;
     private String password;
     private String role;
-    private String created_at;
+    private String created_at;  // 작성 안 해도 되긴 하지만 게시물 수정, 가입일자를 관리자가 확인할 때 필요
     private String updated_at;
 }

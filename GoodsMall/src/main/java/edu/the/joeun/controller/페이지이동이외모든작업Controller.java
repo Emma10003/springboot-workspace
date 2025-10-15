@@ -48,9 +48,6 @@ public class 페이지이동이외모든작업Controller {
     @Autowired
     private UsersService usersService;  // service.UsersService 가져온 것
 
-    @Autowired
-    private MemberService memberService;
-
     /**
      * 모든 상품 목록을 조회하는 API
      * [프론트엔드에서 SQL에 저장된 데이터를 Java 통해서 호출하는 방법]
@@ -141,21 +138,4 @@ public class 페이지이동이외모든작업Controller {
         return usersService.getAllUsers();
     }
 
-    /**
-     * 멤버를 조회하므로 GetMapping
-     */
-    /*
-    @GetMapping("/api/member")
-    public List<Member> getAllMembers(){
-        return memberService.getAllMembers();
-    }
-    */
-
-    /**
-     * 멤버를 등록하므로 PostMapping
-     */
-    @PostMapping("/api/member/add")
-    public void insertMember(@RequestBody Member member){
-        memberService.insertMembers(member);
-    }
 }
