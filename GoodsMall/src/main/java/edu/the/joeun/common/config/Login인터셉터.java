@@ -1,9 +1,9 @@
 package edu.the.joeun.common.config;
 
+import edu.the.joeun.model.Users;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -24,7 +24,7 @@ public class Login인터셉터 implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         HttpSession session = request.getSession();
-        User loginUser = (User)session.getAttribute("loginUser");
+        Users loginUser = (Users)session.getAttribute("loginUser");
 
         // 로그인 되지 않은 경우
         if(loginUser==null){

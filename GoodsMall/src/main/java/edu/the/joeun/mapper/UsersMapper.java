@@ -38,4 +38,14 @@ public interface UsersMapper {
     //      쿼리가 동작하긴 하지만 유지보수가 어려워 사용을 지양하는 형태
     //      @INSERT("INSERT INTO user (name, email, role) VALUES(#{name}, #{email}, #{role})")
     void insertUsers(Users users);  // 유저 등록
+
+    /**
+     * 이메일로 사용자 조회 (로그인용)
+     * 특정 유저 1명만 조회하는 것이기 때문에
+     * User 자료형 사용
+     *
+     * @param email html -> js -> controller -> service 에서 가져온 email 값을 매개변수로 받아옴
+     * @return email을 활용한 유저 정보를 service 에 전달, email 존재 유무에 따라 전달 여부 설정.
+     */
+    Users getUserByEmail(String email);
 }

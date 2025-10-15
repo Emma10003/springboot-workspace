@@ -40,4 +40,11 @@
         사용자가 작성한 데이터를 기입하지 않는다. -->
     </insert>
 
+    <!-- 이메일로 사용자 조회 (로그인 용도) -->
+    <select id="getUserByEmail" parameterType="String" resultMap="resultUser">
+        SELECT *
+        FROM user
+        WHERE email = #{email}
+    </select>
+
 </mapper>
