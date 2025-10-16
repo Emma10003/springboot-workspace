@@ -14,6 +14,7 @@ function submitUser(event) {
         return;
     }
 
+    // 객체 리터럴을 만드는 문법 - js에서 {} 로 둘러싸인 키-값 쌍은 모두 객체(Object)임!
     const userData = {
         name: name,
         email: email,
