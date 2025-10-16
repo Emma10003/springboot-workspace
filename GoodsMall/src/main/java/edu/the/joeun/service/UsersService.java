@@ -24,7 +24,6 @@ public class UsersService {
         return usersMapper.getAllUsers();
     }
 
-
     public void insertUsers(Users users){
         /**
          * 비밀번호 암호화 같은 복합 작업 진행하는 공간
