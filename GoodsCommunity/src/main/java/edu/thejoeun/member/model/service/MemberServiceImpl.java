@@ -38,7 +38,11 @@ public class MemberServiceImpl implements MemberService {
         }
 
         // 비밀번호 일치하지 않으면 null
-        if(!bCryptPasswordEncoder.matches(member.getMemberPassword(), memberPassword)) {
+        // bCrypt 의 경우 알고리즘
+        // 클라이언트가 작성한 비밀번호 -> bCrypt 형태의 알고리즘으로 변환
+        // DB에서 bCrypt 형태로 변환된 비밀번호를 가져오는 위치
+        //                       .matches(클라이언트가 작성한 비밀번호,  DB에 저장된 비밀번호)
+        if(!bCryptPasswordEncoder.matches(memberPassword, member.getMemberPassword())) {
             return null;
         }
 

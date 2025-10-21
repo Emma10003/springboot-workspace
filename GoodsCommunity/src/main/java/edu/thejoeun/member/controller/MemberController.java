@@ -18,8 +18,19 @@ public class MemberController {
     @Autowired
     MemberServiceImpl memberService;
 
+    @GetMapping("/")
+    public String pageMain(){
+        // return "main";
+        return "index";
+    }
+
+
     @GetMapping("/login")
-    public String pageLogin(){
+    public String pageLogin(@CookieValue(value = "saveId", required = false) String savedEmail,
+                            Model model){
+        if(savedEmail!=null){
+            model.addAttribute("savedEmail", savedEmail);
+        }
         return "pages/login";
     }
 
@@ -28,7 +39,7 @@ public class MemberController {
     @PostMapping("/login")
     public String login(@RequestParam String memberEmail,
                         @RequestParam String memberPassword,
-                        @RequestParam(required = false) String saveId,  // 필수로 전달하지 않아도 되는 매개변수
+                        @RequestParam(required = false) String saveIdCheck,  // 필수로 전달하지 않아도 되는 매개변수
                         HttpSession session,
                         HttpServletResponse res,
                         Model model,
@@ -57,7 +68,8 @@ public class MemberController {
          아이디를 작성 안 했는데 쿠키에 저장할 이유가 없으므로,
          아이디값을 작성하고 아이디 저장 체크를 했을 경우에만 30일 동안 아이디 명칭을 저장하겠다.
          */
-        if(userIdCookie != null && saveId.equals("on")) {
+        if("on".equals(saveIdCheck)){
+        // if(userIdCookie != null && saveId.equals("on")) {
             //                    60초 * 60분 * 24시간 * 30일 => 총 30일 동안 유효하게 설정
             userIdCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 초 단위로 지정
         } else {
