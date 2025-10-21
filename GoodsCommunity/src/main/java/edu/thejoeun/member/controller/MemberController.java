@@ -25,13 +25,16 @@ public class MemberController {
     }
 
 
+    // 쿠키 설정할 때 아이디 저장 안 되면 가장 먼저 하는 작업
+    // @CookieView 와 Model 은 필요없음!!!
     @GetMapping("/login")
-    public String pageLogin(@CookieValue(value = "saveId", required = false) String savedEmail,
-                            Model model){
-        if(savedEmail!=null){
-            model.addAttribute("savedEmail", savedEmail);
-        }
+    public String pageLogin(){
         return "pages/login";
+    }
+
+    @GetMapping("/member/myPage")
+    public String pageMyPage(){
+        return "pages/myPage";
     }
 
     // GPT or AI -> Model 로 모든 것을 처리함
@@ -69,7 +72,7 @@ public class MemberController {
          아이디값을 작성하고 아이디 저장 체크를 했을 경우에만 30일 동안 아이디 명칭을 저장하겠다.
          */
         if("on".equals(saveIdCheck)){
-        // if(userIdCookie != null && saveId.equals("on")) {
+        // if(userIdCookie != null && saveIdCheck.equals("on")) {
             //                    60초 * 60분 * 24시간 * 30일 => 총 30일 동안 유효하게 설정
             userIdCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 초 단위로 지정
         } else {
