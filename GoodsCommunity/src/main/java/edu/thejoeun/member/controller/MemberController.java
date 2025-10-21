@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@SessionAttributes({"loginUser"})
+// @SessionAttributes({"loginUser"}) -> SessionUtil, SessionAttribute 동시에 유저 정보가 저장됨
 @Controller
 public class MemberController {
     @Autowired
@@ -33,7 +33,7 @@ public class MemberController {
     }
 
     @GetMapping("/member/myPage")
-    public String pageMyPage(){
+    public String pageMyPage() {
         return "pages/myPage";
     }
 
@@ -42,7 +42,7 @@ public class MemberController {
     @PostMapping("/login")
     public String login(@RequestParam String memberEmail,
                         @RequestParam String memberPassword,
-                        @RequestParam(required = false) String saveIdCheck,  // 필수로 전달하지 않아도 되는 매개변수
+                        @RequestParam(required = false) String saveId,  // 필수로 전달하지 않아도 되는 매개변수
                         HttpSession session,
                         HttpServletResponse res,
                         Model model,
@@ -53,6 +53,8 @@ public class MemberController {
             ra.addFlashAttribute("error", "이메일 또는 비밀번호가 일치하지 않습니다.");
             return "redirect:/login";  // 일치하지 않는 게 맞다면 로그인 페이지로 돌려보내기
         }
+
+        model.addAttribute("loginUser", member);
 
         // 세션에 로그인 정보 저장 -> 이 방법을 쓰게 되면 매변 로그인 정보를 코드마다 세팅해야 함 => 사용 안 함!!
         // session.setAttribute("loginUser", member); // loginUser 이름으로 member 정보가 들어감.
@@ -71,8 +73,25 @@ public class MemberController {
          아이디를 작성 안 했는데 쿠키에 저장할 이유가 없으므로,
          아이디값을 작성하고 아이디 저장 체크를 했을 경우에만 30일 동안 아이디 명칭을 저장하겠다.
          */
-        if("on".equals(saveIdCheck)){
         // if(userIdCookie != null && saveIdCheck.equals("on")) {
+        /**
+         * 문자열1.equals(문자열2)
+         * String 내부에 작성되어 있는 메서드 .equals() 는
+         * 맨 앞에 있는 문자열1 이 문자열일 때를 기준으로 만들어진 메서드
+         *
+         *      - 문자열.equals(null) 일 때는 false 를 반환하여 에러를 일으키지 않도록 되어 있음.
+         *
+         *      - 하지만 saveId.equals("on") 형태를 사용했을 때
+         *        지금처럼 saveId 가 null 값으로 전달될 경우에는
+         *        null.equals("on") 의 형태가 되고, 이 경우 대비해놓은 코드가 없음!!
+         *
+         *        saveId 이 체크된 값으로 전달될 경우에는
+         *        "on".equals("on") 형태로 전달되어 true 로 값을 반환하도록 기능이 내부적으로 설정됨.
+         *
+         * if(saveId.equals("on")) {  => saveId가 null 이면 에러 발생
+         * if("on".equals(saveId)) {  => saveId가 null 이어도 정상 작동
+         */
+        if("on".equals(saveId)) {
             //                    60초 * 60분 * 24시간 * 30일 => 총 30일 동안 유효하게 설정
             userIdCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 초 단위로 지정
         } else {
