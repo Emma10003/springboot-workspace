@@ -46,7 +46,7 @@ const initSec = 59; // 타이머 초기값 (초) -> 시간이 지날수록 초�
 const initTime = "05:00"; // 처음 시작하는 타이머 -> 문자열 형태 그대로 유지
 let min = initMin; // 실제 줄어드는 시간(분) 값을 저장할 변수
 let sec = initSec; // 실제 줄어드는 시간(초) 값을 저장할 변수
-const checkOP={ // 내부에 있는 게 모두 true 가 되어야 나중에 회원가입 완료가 될 것.
+const checkObj={ // 내부에 있는 게 모두 true 가 되어야 나중에 회원가입 완료가 될 것.
     "memberEmail" : false,
     "memberPw" : false,
     "memberPwConfirm" : false,
@@ -111,3 +111,44 @@ function zeroPlus(number){
     if(number < 10) return "0" + number;
     else return number;
 }
+
+
+
+// 인증하기 버튼 클릭 시
+// 입력된 인증번호를 비동기로 서버에 전달
+// 입력한 인증번호와 발급된 인증번호가 같은지 비교
+// 아니면 0, 같으면 1 반환
+// 단, 타이머가 00:00 초가 아닐 경우만 수행
+checkAuthKeyBtn.addEventListener("click", () => {
+    if(min === 0 && sec === 0) { // 타이머가 00:00 인 경우
+        alert("인증번호 입력 제한시간을 초과하였습니다.");
+        return;
+    }
+
+    if(authKey.value.length < 6) { // 인증번호가 6자리 미만인 경우
+        alert("인증번호를 정확히 입력해주세요.");
+        return;
+    }
+
+    const obj = {
+        "email" : memberEmail.value,
+        "authKey" : authKey.value
+    }
+    fetch("/email/checkAuthKey", {
+        method : "POST",
+        headers : {"Content-Type" : "application/json"},
+        body : JSON.stringify(obj) // obj 를 json 으로 변경
+    }).then(resp => resp.text())
+        .then(result => {
+            if(result == 0) {
+                alert("인증번호가 일치하지 않습니다.");
+                checkObj.authKey = false;
+                return;
+            }
+            clearInterval(authTimer); // 정답!!! 타이머 중지!!
+            authKeyMessage.innerText = "인증되었습니다.";
+            authKeyMessage.classList.remove("error");
+            authKeyMessage.classList.add("confirm");
+            checkObj.authKey = true; // 인증번호 검사했을 때 통과!!
+        })
+})
