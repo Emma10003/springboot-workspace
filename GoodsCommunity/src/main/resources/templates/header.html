@@ -1,9 +1,20 @@
+<!--
+header.html, footer.html, nav.html
+은 모든 html 본문 코드에 반복적으로 작성할 코드들을
+한 번에 작성 후
+홈페이지에서 어디 위치에 header, footer, nav 를 추가해줘
+라는 형식으로 사용하기 때문에
+아래에 주석 표기한 모든 태그는 생략함.
+-->
+
+<!--
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
 </head>
 <body>
+-->
 <!-- CSS / JS 파일 분리 과제! -->
 <div th:fragment="header">
     <link rel="stylesheet" href="/css/header.css">
@@ -26,5 +37,7 @@
         <a href="/login" style="color: #667eea; text-decoration: none; font-weight: 600;">로그인</a>
     </div>
 </div>
+<!--
 </body>
 </html>
+-->
