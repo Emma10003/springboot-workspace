@@ -81,7 +81,7 @@ public class DBConfig {
         // sessionFactory.setMapperLocations(현재프로젝트에서(어디에 위치한 mapper.xml 파일인지 위치 설정));
         sessionFactory.setMapperLocations(
                 // applicationContext.getResource("classpath:/mappers/**/*.xml")
-                applicationContext.getResource("classpath*:mappers/**/*.xml")
+                applicationContext.getResources("classpath*:mappers/**/*.xml")
         );
 
         // application.properties 에 작성한 model - mapper를 연결해주는 속성 설정을 여기에 작성

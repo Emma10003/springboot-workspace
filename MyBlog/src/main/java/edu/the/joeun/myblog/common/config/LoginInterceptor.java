@@ -1,5 +1,6 @@
 package edu.the.joeun.myblog.common.config;
 
+import edu.the.joeun.myblog.model.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,7 +18,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession();
         // 특정 멤버의 세션을 저장하는 명칭 설정해서 유저 세션 데이터를 조회 설정
+        Member loginUser = (Member) session.getAttribute("loginUser");
 
-        return true;
+        // 로그인 안 됐을 경우
+        if(loginUser==null){
+            response.sendRedirect("/login"); // 다시 로그인으로 돌려보내고
+            return false; // 요청 중단
+        }
+
+        return true; // 문제 없으면 계속 진행
     }
 }

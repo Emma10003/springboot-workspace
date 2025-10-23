@@ -21,7 +21,7 @@
     <select id="selectMemberList" resultType="Member">
         SELECT *
         FROM member
-        ORDER BY member_no
+        ORDER BY member_name
     </select>
 
     <insert id="saveMember" parameterType="Member">
