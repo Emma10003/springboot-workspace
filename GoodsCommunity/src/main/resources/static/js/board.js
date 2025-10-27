@@ -34,8 +34,6 @@ async function fetchBoardData(){
                     <td>${b.writer}</td>
                     <td>${b.viewCount}</td>
                     <td>${b.createdAt}</td>
-                    <td></td>
-                    <td></td>
                     <td onclick="openModal(${b.id})">미리보기</td>
                     <td onclick="gotoDetail(${b.id})">상세보기</td>
                 `;
@@ -68,9 +66,19 @@ async function fetchBoardDetail() {
     }
     
     const b = await detailFunction(boardId); // boardId 에 해당하는 JSON 데이터 반환
+    console.log("DB 데이터 조회 : ", b);
     
     const title = document.querySelector(".board-title");
+    const writer = document.querySelector(".board-writer");
+    const date = document.querySelector(".board-date");
+    const views = document.querySelector(".board-views");
+    const content = document.querySelector(".board-content");
+
     title.textContent = b.title;
+    writer.textContent = b.writer;
+    date.textContent = b.createdAt;
+    views.textContent = b.viewCount;
+    content.textContent = b.content;
 }
 
 /**
@@ -120,9 +128,13 @@ window.addEventListener("DOMContentLoaded", () => {
 // detailFunction 으로 기능 분리 후
 // 이 기능을 모달 열기와 상세보기페이지에서 사용할 수 있도록 변경
 
+const listBtn = document.querySelector(".btn-list");
+listBtn.addEventListener("click", gotoList);
+
 // 상세페이지 이동 버튼 기능
 function gotoDetail(id){
     window.location.href = `/board/detail?id=${id}`;
+    // ?id=${id} 부터는 Controller 에서 @RequestParam 으로 들어온 값이 ${id}에 들어옴.
 }
 
 // 목록으로 돌아가기 버튼 기능
