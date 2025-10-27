@@ -30,6 +30,7 @@ public class MainController {
     // public String pageBoardDetail(@PathVariable Long id){
     @GetMapping("/board/detail")
     public String pageBoardDetail(@RequestParam int id){
+        // @RequestParam 을 사용하면 id가 api 주소 뒤에 ?id=1 이런 식으로 들어옴.
         return "pages/board/boardDetail";
     }
 
