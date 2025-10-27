@@ -103,7 +103,7 @@ public class EmailServiceImpl implements EmailService {
 
     // HTML 파일을 읽어와 String 으로 변환 (thymeleaf 템플릿 사용해서 html 가져오기)
     // import org.thymeleaf.context.Context;
-    public String loadHtml(String authKey, String htmleName) {
+    public String loadHtml(String authKey, String htmlName) {
         Context context = new Context();
 
         // 타임리프가 적용된 html 에서 사용할 값 추가
@@ -111,7 +111,10 @@ public class EmailServiceImpl implements EmailService {
 
         // templates/pages/auth 폴더에서 htmlName 과 같은
         // .html 파일 내용을 읽어와 String 으로 변환
-        return templateEngine.process("pages/auth" + htmleName, context);
+        // return templateEngine.process("pages/auth" + htmlName, context);
+        //  => 적용되는 경로는 pages/authsignup.html 이 됨
+        //     pages/auth/ 로 작성해야 pages/auth/signup.html 로 보임!
+        return templateEngine.process("pages/auth/" + htmlName, context);
     }
 
     /**

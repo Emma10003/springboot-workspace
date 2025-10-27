@@ -131,7 +131,7 @@ public class LoggingAspect {
         return ip;
     }
 
-}d
+}
 /*
 advice : 끼워넣을 코드 (메서드 = 기능)
 pointCut : 실제 advice 를 적용할 joinPoint(지점)
