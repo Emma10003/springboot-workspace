@@ -6,16 +6,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-/**
- * @Data : 가장 많이 사용되는 어노테이션 <br>
- *         여러 개의 어노테이션을 한 번에 적용해주는 복합 어노테이션<br>
- * @Getter, @Setter, @ToString, @EqualAndHashCode, @RequiredArgsConstructor
- * 
- * 이런 모든 어노테이션을 포함하고 있는 어노테이션
- *         
- */
-
+z
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

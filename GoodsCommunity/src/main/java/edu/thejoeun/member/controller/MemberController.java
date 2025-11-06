@@ -20,12 +20,13 @@ public class MemberController {
     @Autowired
     MemberServiceImpl memberService;
 
+    /*
     @GetMapping("/")
     public String pageMain(){
         // return "main";
         return "index";
     }
-
+    */
 
     // 쿠키 설정할 때 아이디 저장 안 되면 가장 먼저 하는 작업
     // @CookieView 와 Model 은 필요없음!!!
