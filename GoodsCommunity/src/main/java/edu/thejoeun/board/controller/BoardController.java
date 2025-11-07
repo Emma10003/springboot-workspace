@@ -41,6 +41,12 @@ public class BoardController {
         return schedulingService.getPopularBoards();
     }
 
+    @PostMapping    // api endpoint = '/api/board' (맨 위에 작성한 requestMapping 에 해당)
+    public void createBoard(@RequestBody Board board) {
+        boardService.createBoard(board);
+    }
+
+
     /*
     인기글을 23시 59분까지 기다리지 않고,
     개발자가 인기글 업데이트가 무사히 잘 되는지 확인하는 방법 1
