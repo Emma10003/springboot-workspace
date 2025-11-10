@@ -17,16 +17,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @Slf4j // log를 출력하게 해주는 어노테이션
 public class MemberController {
+    /*
     @Autowired
     MemberServiceImpl memberService;
 
-    /*
+    *//*
     @GetMapping("/")
     public String pageMain(){
         // return "main";
         return "index";
     }
-    */
+    *//*
 
     // 쿠키 설정할 때 아이디 저장 안 되면 가장 먼저 하는 작업
     // @CookieView 와 Model 은 필요없음!!!
@@ -68,16 +69,16 @@ public class MemberController {
         userIdCookie.setPath("/");
         // 유저 아이디를 아이디 저장이 체크되어 있으면(saveId.equals("on")) 30일 간 유저 아이디 저장
         // 체크되어 있지 않으면 유저 아이디를 쿠키에 저장하지 않겠다.
-        /*
+        *//*
          체크박스에서 value 가 없을 때
          - 체크가 된 경우    : on
          - 체크가 안 된 경우 : null
          아이디 저장과 같이 단순 체크는 on - null 이용해서 체크 유무 확인
          아이디를 작성 안 했는데 쿠키에 저장할 이유가 없으므로,
          아이디값을 작성하고 아이디 저장 체크를 했을 경우에만 30일 동안 아이디 명칭을 저장하겠다.
-         */
+         *//*
         // if(userIdCookie != null && saveIdCheck.equals("on")) {
-        /**
+        *//**
          * 문자열1.equals(문자열2)
          * String 내부에 작성되어 있는 메서드 .equals() 는
          * 맨 앞에 있는 문자열1 이 문자열일 때를 기준으로 만들어진 메서드
@@ -93,7 +94,7 @@ public class MemberController {
          *
          * if(saveId.equals("on")) {  => saveId가 null 이면 에러 발생
          * if("on".equals(saveId)) {  => saveId가 null 이어도 정상 작동
-         */
+         *//*
         if("on".equals(saveId)) {
             //                    60초 * 60분 * 24시간 * 30일 => 총 30일 동안 유효하게 설정
             userIdCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 초 단위로 지정
@@ -116,12 +117,12 @@ public class MemberController {
 
         SessionUtil.invalidateLoginUser(session); // 세션 삭제
 
-        /* 로그아웃 시 아이디 저장되어 있는 saveId 도 삭제된다.
+        *//* 로그아웃 시 아이디 저장되어 있는 saveId 도 삭제된다.
         Cookie userIdCookie = new Cookie("saveId", null); // 쿠키 삭제
         userIdCookie.setMaxAge(0);
         userIdCookie.setPath("/");
         res.addCookie(userIdCookie);
-        */
+        *//*
         return "redirect:/";  // 로그아웃 선택 시 모든 쿠키 데이터 지우고 메인으로 돌려보내기
-    }
+    }*/
 }
