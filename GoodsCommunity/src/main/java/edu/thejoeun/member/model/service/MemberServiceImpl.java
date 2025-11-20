@@ -1,53 +1,96 @@
 package edu.thejoeun.member.model.service;
 
+import edu.thejoeun.common.util.SessionUtil;
 import edu.thejoeun.member.model.dto.Member;
 import edu.thejoeun.member.model.mapper.MemberMapper;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
+@Slf4j
 public class MemberServiceImpl implements MemberService {
     @Autowired
     private MemberMapper memberMapper;
-
-    /**
-     * Autowired 형태로 변경해 <br>
-     * config 에서 관리할 것
-     */
     BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    /**
-     * MemberService 에서 작성한 기능명칭(매개변수 자료형, 개수)가 <br>
-     * MemberServiceImpl 과 일치하지 않으면 @Override 된 상태가 아님 <br>
-     * 명칭만 똑같이 썼을 뿐
-     * @param memberEmail       html -> js -> controller api/endpoint 로 가져온 이메일
-     * @param memberPassword    html -> js -> controller api/endpoint 로 가져온 비밀번호
-     * @param session           유저 정보가 DB에 조회되면 session 부여
-     * @param model             유저 정보가 조회되면 model 세팅
-     * @return
-     */
     @Override
     public Member login(String memberEmail, String memberPassword) {
         Member member = memberMapper.getMemberByEmail(memberEmail);
-        // email 로 DB에서 조회되는 데이터가 0개이면 null (=사용자가 존재하지 않는다면)
         if(member == null){
             return null;
         }
-
-        // 비밀번호 일치하지 않으면 null
-        // bCrypt 의 경우 알고리즘
-        // 클라이언트가 작성한 비밀번호 -> bCrypt 형태의 알고리즘으로 변환
-        // DB에서 bCrypt 형태로 변환된 비밀번호를 가져오는 위치
-        //                       .matches(클라이언트가 작성한 비밀번호,  DB에 저장된 비밀번호)
         if(!bCryptPasswordEncoder.matches(memberPassword, member.getMemberPassword())) {
             return null;
         }
 
-        // 이메일도 존재하고, 비밀번호도 일치하면
-        member.setMemberPassword(null);  // 비밀번호 제거한 상태로 유저 정보를 controller 에 전달
-        return member; // 멤버에 대한 모든 정보를 컨트롤러에 전달
+        member.setMemberPassword(null);
+        return member;
     }
+
+    public Map<String, Object> loginProcess(String memberEmail, String memberPassword, HttpSession session) {
+        Map<String, Object> res = new HashMap<>();
+
+        // 1. 로그인 검증
+        Member m = login(memberEmail, memberPassword);
+
+        // 2. 로그인 실패
+        if(m == null) {
+            res.put("success", false);
+            res.put("message", "이메일 또는 비밀번호가 일치하지 않습니다.");
+            log.warn("로그인 실패: {}", memberEmail);
+            return res;
+        }
+
+        // 3. 세션에 사용자 정보 저장
+        SessionUtil.setLoginUser(session, m);
+
+        // 4. 성공 응답 생성
+        res.put("success", true);
+        res.put("message", "로그인 성공");
+        res.put("user", m);
+
+        log.info("로그인 성공: {}", m.getMemberEmail());
+        return res;
+    }
+
+    /**
+     * 로그아웃 처리
+     * @param session 로그인된 세션 정보 가져와서 로그아웃 처리 후
+     * @return 처리 결과 반환
+     */
+    public Map<String, Object> logoutProcess(HttpSession session) {
+        Map<String, Object> res = new HashMap<>();
+        SessionUtil.invalidateLoginUser(session);
+        res.put("success", true);
+        res.put("message", "로그아웃 성공");
+
+        return res;
+    }
+
+    /**
+     * 로그인 상태 확인
+     * @param session 현재 세션을 가져온 후
+     * @return 로그인이 되어 있으면 로그인 된 상태로 반환.
+     */
+    public Map<String, Object> checkLoginStatus(HttpSession session) {
+        Map<String, Object> res = new HashMap<>();
+        Member loginUser = (Member) session.getAttribute("loginUser");
+
+        if(loginUser == null) {
+            res.put("success", false);
+            res.put("로그인 상태 확인: {}", loginUser.getMemberEmail());
+        } else {
+            res.put("loggedIn", true);
+            res.put("user", loginUser);
+            log.debug("로그인 상태 확인: {}", loginUser.getMemberEmail());
+        }
+        return res;
+    }
+
 }
