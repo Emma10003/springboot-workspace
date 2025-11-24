@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>커뮤니티 - 마이페이지</title>
+
+</head>
+<body>
+
+<div th:fragment="header">
+    <link rel="stylesheet" href="/css/header.css">
+
+    <div th:if="${session.loginUser}" class="user-info">
+        <span class="user-name" th:text="${session.loginUser.memberName}"></span>
+        <span class="user-role"
+              th:classappend="${session.loginUser.memberRole == 'ADMIN'} ? 'admin' : ''"
+              th:text="${session.loginUser.memberRole == 'ADMIN'} ? '관리자' : '일반회원'">
+        </span>
+
+        <a href="/member/myPage" style="color: #667eea; text-decoration: none; font-weight: 600;">마이페이지</a>
+
+        <form action="/logout" method="post" style="margin: 0;">
+            <button type="submit" class="btn-logout">로그아웃</button>
+        </form>
+    </div>
+
+    <div th:unless="${session.loginUser}" class="user-info">
+        <a href="/login" style="color: #667eea; text-decoration: none; font-weight: 600;">로그인</a>
+    </div>
+</div>
+    <div th:replace="~{header :: header}"></div>
+    <h1>마이페이지</h1>
+    <button type="submit" class="btn" id="pageChangPW">비밀번호변경</button>
+
+</body>
+</html>
