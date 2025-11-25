@@ -9,7 +9,7 @@
     <select id="getAllProducts" resultType="Product">
         SELECT *
         FROM product
-        ORDER BY created_at DESC NULLS LAST
+        ORDER BY created_at DESC
     </select>
 
     <!-- 상품 상세 조회, id로 상품의 세부내용 확인 -->
@@ -36,32 +36,28 @@
         SELECT *
         FROM product
         WHERE category = #{category}
-          AND is_active = TRUE
-        ORDER BY created_at DESC NULLS LAST
+        AND is_active = TRUE
+        ORDER BY created_at DESC
     </select>
 
     <!--
-    Oracle 에서는 CONCAT 대신 || 연산자 사용, 또는 CONCAT 함수 중첩해서 사용
-    product_name LIKE CONCAT('%', #{keyword}, '%')
-    OR product_code LIKE CONCAT('%', #{keyword}, '%')
-    R manufacturer LIKE CONCAT('%', #{keyword}, '%')
-
-    Oracle에서는 BOOLEAN 개념이 존재하지 않는다.
-    AND is_active = TRUE  ->  AND is_active = 'Y' 사용!
+    상품 검색, 검색창에 keyword 를 입력하면 상품명, 코드, 제조사(=브랜드) 조회
+    품절, 판매중지 상품이 아니라 판매 중인 상품만 조회.
+    지금은 업로드 최신순이지만, 판매순/인기순 조회 가능.
     -->
     <select id="searchProducts" resultType="Product">
         SELECT *
         FROM product
-        WHERE (product_name LIKE '%' || #{keyword} || '%'
-            OR product_code LIKE '%' || #{keyword} || '%'
-            OR manufacturer LIKE '%' || #{keyword} || '%'
+        WHERE (product_name LIKE CONCAT('%', #{keyword}, '%')
+            OR product_code LIKE CONCAT('%', #{keyword}, '%')
+            OR manufacturer LIKE CONCAT('%', #{keyword}, '%')
             )
-          AND is_active = 'Y'
-        ORDER BY created_at DESC NULLS LAST
+          AND is_active = TRUE
+        ORDER BY created_at DESC
     </select>
 
     <!-- 상품 등록 -->
-    <insert id="insertProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insertProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO product (
             product_name, product_code, category, price, stock_quantity, description, manufacturer,
             image_url
@@ -87,7 +83,7 @@
     <!-- 상품 삭제 (진짜 삭제 아니고 비활성화로 상태 변경) -->
     <update id="deleteProduct" parameterType="Product">
         UPDATE product
-        SET is_active = 'N'
+        SET is_active = FALSE
         WHERE id = #{id}
     </update>
 

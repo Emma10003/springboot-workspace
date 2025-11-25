@@ -6,22 +6,47 @@
 
 <mapper namespace="edu.thejoeun.common.scheduling.Mapper.SchedulingMapper">
 
-    <insert id="insertPopularBoards" parameterType="board">
-     INSERT INTO  popular_board(board_id, ranking, updated_at)
-     SELECT
-         id, ROW_NUMBER() OVER(ORDER BY view_count DESC) as ranking, NOW()
-     FROM board
-     ORDER BY  view_count DESC
-     LIMIT 10
+    <!--
+    Oracle 에서는 LIMIT 대신 FETCH FIRST 또는 ROWNUM 사용  ->  ROWNUM 은 코드가 번잡함
+    Now() 대신 SYSDATE 또는 CURRENT_TIMESTAMP 사용.
+
+    LIMIT 10 변경
+    1번 방법) ROWNUM
+        INSERT INTO  popular_board(board_id, ranking, updated_at)
+        SELECT
+            id, ranking, CURRENT_TIMESTAMP
+        FROM (
+            SELECT id, ROW_NUMBER OVER(ORDER BY view_count DESC) as ranking
+            FROM board
+            ORDER BY  view_count DESC NULLS LAST
+        )
+        WHERE ROWNUM <= 10
+
+    2번 방법) FETCH FIRST
+        INSERT INTO  popular_board(board_id, ranking, updated_at)
+        SELECT id, ROW_NUMBER OVER(ORDER BY view_count DESC) as ranking, CURRENT_TIMESTAMP
+        FROM board
+        ORDER BY  view_count DESC NULLS LAST
+        FETCH FIRST 10 ROWS ONLY
+    => ROWNUM 의 복잡하고 번거로운 코드를 간략하게 사용할 수 있는 추가 예약어 문법.
+
+     useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+     => 안 쓴다고 해서 문제가 되진 않으나, 써 주는 게 좋다!
+    -->
+    <insert id="insertPopularBoards" parameterType="board" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO  popular_board(board_id, ranking, updated_at)
+        SELECT id, ROW_NUMBER OVER(ORDER BY view_count DESC) as ranking, CURRENT_TIMESTAMP
+        FROM board
+        ORDER BY  view_count DESC NULLS LAST
+        FETCH FIRST 10 ROWS ONLY
     </insert>
 
     <select   id="selectPopularBoards" resultType="Board">
         SELECT
             b.id, b.title,b.content,b.view_count, b.created_at, b.updated_at, p.ranking, p.updated_at
         FROM popular_board p
-        JOIN board b ON board_id = b.id
+                 JOIN board b ON board_id = b.id
         ORDER BY P.ranking ASC
-
     </select>
 
     <delete id="deleteAllPopularBoards">
