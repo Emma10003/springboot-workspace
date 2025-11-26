@@ -3,6 +3,7 @@ package edu.thejoeun.member.controller;
 import edu.thejoeun.common.util.SessionUtil;
 import edu.thejoeun.member.model.dto.Member;
 import edu.thejoeun.member.model.service.MemberServiceImpl;
+import jakarta.mail.Session;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -62,7 +63,7 @@ public class MemberAPIController {
            */
       } catch (Exception e){
           log.error("회원가입 실패 - 이메일 : {}, 에러 : {}",member.getMemberEmail(),e.getMessage());
-        }
+      }
 
     }
 

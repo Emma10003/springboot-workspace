@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import java.util.HashMap;
@@ -33,8 +34,9 @@ public class MemberServiceImpl  implements MemberService {
         }
         member.setMemberPassword(null);
             return member;
-        }
+    }
 
+    @Transactional  // 이거 작성 안 하면 저장 안됨!!
     @Override
     public void saveMember(Member member) {
         String originPW = member.getMemberPassword(); // 기존 클라이언트 비밀번호 가져오기
@@ -46,6 +48,7 @@ public class MemberServiceImpl  implements MemberService {
         memberMapper.saveMember(member);
     }
 
+    @Transactional
     @Override
     public Map<String, Object> updateMember(Member member, String currentPassword, HttpSession session) {
         Map<String, Object> res = new HashMap<>();
