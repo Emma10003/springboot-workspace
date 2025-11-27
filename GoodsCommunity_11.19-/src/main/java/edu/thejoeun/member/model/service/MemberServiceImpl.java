@@ -63,7 +63,10 @@ public class MemberServiceImpl  implements MemberService {
             }
 
             // DB에서 최신정보 가져오기
-            Member m = memberMapper.getMemberByEmail(member.getMemberEmail());
+            // Member m = memberMapper.getMemberByEmail(member.getMemberEmail());
+            Member m = memberMapper.getMemberByEmail(loginUser.getMemberEmail());
+            log.info("💡 loginUser.getMemberEmail: {}", loginUser.getMemberEmail());
+            log.info("💡 member.getMemberEmail: {}", member.getMemberEmail());
 
             // id -> where 절 조건으로 사용
             //  + 현재 비밀번호와 비밀번호 변경할 때 작성한 현재 비밀번호가 일치하는지 확인

@@ -1,6 +1,5 @@
 package edu.thejoeun.member.model.service;
 
-import edu.thejoeun.member.model.mapper.EmailMapper;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -26,16 +26,16 @@ public class EmailServiceImpl implements EmailService {
     // EmailConfig 에  설정된 메일보내기 기능 과 관련 환경설정 사용
     private final JavaMailSender mailSender;
 
-    private final EmailMapper emailMapper;
-
     // 템플릿 엔진 이용해서 auth/signup.html 에 있는 html 코드를 java로 변환
     private final SpringTemplateEngine templateEngine;
 
-    Map<String, String> authKeyStorage = new ConcurrentHashMap<>();
+    private final Map<String, String> authKeyStorage = new ConcurrentHashMap<>();
 
     // 이메일 보내기
     @Override
     public String sendMail(String htmlName, String email) {
+        // 이메일 정제
+        email = email.trim().replaceAll("^\"|\"$", "");
 
         // 6자리 난수 코드 생성하는 기능 불러오기
         String authKey = createAuthKey();
@@ -69,7 +69,7 @@ public class EmailServiceImpl implements EmailService {
             mailSender.send(mimeMessage); // 이메일 발송
 
             authKeyStorage.put(email, authKey);
-            log.info("✅ 인증키 저장 - 이메일: {}", email);
+            log.info("✅ 인증키 메모리 저장 완료 - 이메일: {}", email);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -163,10 +163,16 @@ public class EmailServiceImpl implements EmailService {
     // 이메일, 인증번호 확인
     @Override
     public int checkAuthKey(Map<String, Object> map) {
-        String email = (String) map.get("email");
+        // String email = (String) map.get("email"); -> 공백과 "" String 형태의 문자열까지 포함하여 가져옴.
+        String email = ((String) map.get("email")).trim().replaceAll("^\"|\"$", "");
         String inputAuthKey = (String) map.get("authKey");
         log.info("✅ 인증키 확인 - 이메일: {}", email);
         String storedAuthKey = authKeyStorage.get(email);
+
+        if(storedAuthKey == null) {
+            log.warn("⚠️ 저장된 인증키 없음 - 이메일: {}", email);
+            return 0;
+        }
 
         if(storedAuthKey != null && storedAuthKey.equals(inputAuthKey)){
             log.info("✅ 인증 성공");
