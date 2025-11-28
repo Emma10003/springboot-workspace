@@ -109,6 +109,8 @@ public class MemberServiceImpl  implements MemberService {
         return res;
     }
 
+
+
     public Map<String, Object> loginProcess(String memberEmail, String memberPassword, HttpSession session) {
             Map<String, Object> res = new HashMap<>();
             Member m = login(memberEmail,memberPassword);
@@ -159,5 +161,14 @@ public class MemberServiceImpl  implements MemberService {
                 log.debug("로그인 상태 확인 : {}", loginUser.getMemberEmail());
             }
             return  res;
-        }
     }
+
+    @Transactional
+    @Override
+    public void updateProfileImage(String memberEmail, String memberProfileImage) {
+        memberMapper.updateProfileImage(memberEmail, memberProfileImage);
+        log.info("✅ 프로필 이미지 DB 업데이트 완료 - 이메일: {}, 프로필이미지: {}",
+                memberEmail, memberProfileImage)
+    }
+
+}

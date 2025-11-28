@@ -25,13 +25,22 @@
         VALUES (#{memberName},#{memberEmail},#{memberPassword}, #{memberAddress}, #{memberPhone})
     </insert>
 
-    <!-- 회원정보가 수정되지 않을 것! -->
+    <!-- 회원정보 수정 -->
     <update id="updateMember" parameterType="Member">
         UPDATE member
-        SET member_password = #{memberPassword},
+        SET
+            member_password = #{memberPassword},
+            member_profile_image = #{memberProfileImage},
             member_address = #{memberAddress},
             member_phone = #{memberPhone}
         WHERE member_id = #{memberId};
     </update>
 
+    <!-- 프로필 이미지만 업데이트 -->
+    <update id="updateProfileImage">
+        UPDATE member
+        SET
+            member_profile_image = #{memberProfileImage}
+        WHERE member_email = #{memberEmail};
+    </update>
 </mapper>

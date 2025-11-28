@@ -21,4 +21,6 @@ public interface MemberMapper {
     void saveMember(Member member);
 
     void updateMember(Member member);
+
+    void updateProfileImage(String memberEmail, String memberProfileImage);
 }

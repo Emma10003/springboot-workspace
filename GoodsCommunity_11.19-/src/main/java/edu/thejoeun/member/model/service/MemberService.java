@@ -13,4 +13,6 @@ public interface MemberService {
     Member login(String memberEmail, String memberPassword);
     void saveMember(Member member);
     Map<String, Object> updateMember(Member member, String currentPassword, HttpSession session);
+
+    void updateProfileImage(String memberEmail, String memberProfileImage);
 }
