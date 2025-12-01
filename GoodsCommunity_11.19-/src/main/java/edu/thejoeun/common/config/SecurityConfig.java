@@ -38,15 +38,7 @@ public class SecurityConfig {
                  * 커스텀 URL 접근 설정을 진행해야한다.
                  */
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                /* 내가 임의로 추가한 코드 */
-                                "/api/auth/**",
-                                "/api/product/**",
-                                "/api/board/**",
-                                "/ws/**",
-                                /* 내가 임의로 추가한 코드 끝 */
-                                "/profile_images/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
 
                 /**
