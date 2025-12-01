@@ -30,7 +30,7 @@ public class FileUploadService {
      * @return 저장된 파일의 경로 (DB에 저장할 상대 경로
      * @throws IOException 파일 처리 중 오류 발생 시 예외 처리
      */
-    public String uploadProfileFileImage(MultipartFile file) throws IOException {
+    public String uploadProfileImage(MultipartFile file) throws IOException {
         // 파일이 비어있는지 확인
         if(file.isEmpty()){
             throw new IOException("업로드할 파일이 없습니다.");
@@ -78,6 +78,7 @@ public class FileUploadService {
         }
 
         // DB에서 저장할 상대경로 반환 (웹에서 접근 가능한 경로)
-        return "/profile_images" + 하나_밖에_없는_파일이름;
+        // 폴더 경로는 WebConfig 의 경로명(.addResourceHandler)과 일치시킬 것!
+        return "/profile_images/" + 하나_밖에_없는_파일이름;
     }
 }

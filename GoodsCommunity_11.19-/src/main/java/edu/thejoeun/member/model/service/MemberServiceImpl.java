@@ -1,26 +1,34 @@
 package edu.thejoeun.member.model.service;
 
 
+import edu.thejoeun.common.exception.ForbiddenException;
+import edu.thejoeun.common.exception.UnauthorizedException;
+import edu.thejoeun.common.util.FileUploadService;
 import edu.thejoeun.common.util.SessionUtil;
 import edu.thejoeun.member.model.dto.Member;
 import edu.thejoeun.member.model.mapper.MemberMapper;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl  implements MemberService {
-    @Autowired
-    private MemberMapper memberMapper;
 
+    private final MemberMapper memberMapper;
+    private final FileUploadService fileUploadService;
     BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -163,12 +171,54 @@ public class MemberServiceImpl  implements MemberService {
             return  res;
     }
 
+    // 클라이언트 측에서 발생하는 문제를 이중으로 보안하기도 하고,
+    // 타 개발자, 해커, 블랙 클라이언트로부터 회사 서비스를 보호하기 위한 예외 차단 처리
     @Transactional
     @Override
-    public void updateProfileImage(String memberEmail, String memberProfileImage) {
-        memberMapper.updateProfileImage(memberEmail, memberProfileImage);
-        log.info("✅ 프로필 이미지 DB 업데이트 완료 - 이메일: {}, 프로필이미지: {}",
-                memberEmail, memberProfileImage)
-    }
+    public String updateProfileImage(Member loginUser, String memberEmail, MultipartFile file, HttpSession session) throws IOException {
+        // UnauthorizedException = IllegalStateException 이 상속받아서 처리
+        if(loginUser == null) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
 
+        // ForbiddenException = SecurityException 이 상속받아서 처리
+        // 본인 확인
+        if(!loginUser.getMemberEmail().equals(memberEmail)){
+            throw new ForbiddenException("본인의 프로필만 수정할 수 있습니다.");
+        }
+
+        // 파일 유효성 검증
+        if(file.isEmpty()) {
+            throw new IllegalArgumentException("파일이 비어있습니다.");
+        }
+
+        // 이미지 파일인지 확인
+        String contentType = file.getContentType();
+        if(contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다.");
+        }
+
+        if(file.getSize() > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("파일 크기는 5MB를 초과할 수 없습니다.");
+        }
+
+        // 기존 프로필 이미지 삭제
+        if(loginUser.getMemberProfileImage() != null) {
+            // 삭제 관련 기능을 FileUploadService 에서 작성 후 기능 추가
+        }
+
+        // 새 이미지 업로드
+        String imageUrl = fileUploadService.uploadProfileImage(file);
+
+        // DB 업데이트
+        // 작동하기 전에 상태 확인 후 작동해야 함.
+        // 세션 업데이트
+        loginUser.setMemberProfileImage(imageUrl);
+        SessionUtil.setLoginUser(session, loginUser);
+
+        memberMapper.updateProfileImage(memberEmail, imageUrl);
+        log.info("✅ 프로필 이미지 DB 업데이트 완료 - 이메일: {}", memberEmail);
+
+        return imageUrl;
+    }
 }

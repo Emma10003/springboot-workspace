@@ -33,14 +33,14 @@
             member_profile_image = #{memberProfileImage},
             member_address = #{memberAddress},
             member_phone = #{memberPhone}
-        WHERE member_id = #{memberId};
+        WHERE member_id = #{memberId}
     </update>
 
     <!-- 프로필 이미지만 업데이트 -->
-    <update id="updateProfileImage">
+    <update id="updateProfileImage" parameterType="Member">
         UPDATE member
         SET
             member_profile_image = #{memberProfileImage}
-        WHERE member_email = #{memberEmail};
+        WHERE member_email = #{memberEmail}
     </update>
 </mapper>
