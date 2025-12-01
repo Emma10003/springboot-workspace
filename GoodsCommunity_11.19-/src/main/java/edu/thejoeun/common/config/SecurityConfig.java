@@ -38,7 +38,14 @@ public class SecurityConfig {
                  * 커스텀 URL 접근 설정을 진행해야한다.
                  */
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/profile_images/**").permitAll()
+                        .requestMatchers(
+                                /* 내가 임의로 추가한 코드 */
+                                "/api/auth/**",
+                                "/api/product/**",
+                                "/api/board/**",
+                                "/ws/**",
+                                /* 내가 임의로 추가한 코드 끝 */
+                                "/profile_images/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
@@ -48,6 +55,16 @@ public class SecurityConfig {
                  * 리액트로 진행하는 프론트엔드 또한 빌드작업을 하여
                  * resource 와 static 으로 정적데이터를 가져오면
                  * 하위 폴더에 접근할 수 있는 권한이 존재해야하기 때문에 미리 작성
+                 *
+
+                 .authorizeHttpRequests(auth -> auth
+                         .requestMatchers("/profile_images/**",
+                         "/css/**",
+                         "/js/**",
+                         "/images/**"
+                         ).permitAll()
+                         .anyRequest().authenticated()
+                 )
                  */
                 .formLogin(AbstractHttpConfigurer::disable)
 
@@ -58,11 +75,20 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .maximumSessions(1)  // 동시에 세션 1개만 허용
                         .maxSessionsPreventsLogin(false)  // 새 로그인 시 기존 세션 무효화
-                )
+                );
+
+                /*
+                SecurityConfig 는 모든 api 경로에서 최우선의 권한을 가지고 있다.
+                MemberAPIController 에서 작동해야 하는 로그아웃 경로를
+                Security 가 가로챔.
+                -> MemberAPIController 에서 작동해야 할 로그아웃이 동작하지 않는다!
+
                 .logout(logout -> logout
                         .logoutUrl("api/auth/logout")
                         .permitAll()
                 );
+                 */
+
 
         return http.build();
     }

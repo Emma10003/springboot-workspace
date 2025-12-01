@@ -145,7 +145,7 @@ public class MemberServiceImpl  implements MemberService {
         Map<String, Object> res = new HashMap<>();
         SessionUtil.invalidateLoginUser(session);
         res.put("success",true);
-        res.put("message","로그아웃 성공");
+        res.put("message", "로그아웃 성공");
 
         return res;
         }
