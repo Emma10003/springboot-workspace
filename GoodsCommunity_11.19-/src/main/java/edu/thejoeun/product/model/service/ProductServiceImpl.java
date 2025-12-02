@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
     // 상품에 대한 정보 저장 @Transactional 어노테이션이 필수로 붙어야 함
     @Override
     @Transactional
-    public void insertProduct(Product product) {
+    public void insertProduct(Product product, MultipartFile imageFile) {
         log.info("💡 상품 등록 시작 - ID: {}", product.getProductName());
         // 유효성 검사
         // void validateProduct(Product product);
@@ -89,6 +90,16 @@ public class ProductServiceImpl implements ProductService {
         if(existingProduct != null) {
             log.warn("💡 상품 코드 중복 - Code: {}", product.getProductCode());
             throw new IllegalArgumentException("이미 존재하는 상품입니다.");
+        }
+
+        // 만약에 이미지 파일이 있으면 처리
+        if(imageFile != null && !imageFile.isEmpty()) {
+            try{
+                //
+            } catch (Exception e) {
+                log.error("❌ 파일 업로드 실패 : ", e);
+                throw new RuntimeException("이미지 업로드에 실패했습니다.");
+            }
         }
 
         int result = productMapper.insertProduct(product);

@@ -8,6 +8,7 @@ import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -79,13 +80,36 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    /**
+     *
+     * @param product  @RequestPart() 내부에는 javascript 에서 지정한 변수명과 required 형태를 지정하여 작성할 수 있다.
+     *                 만일 아무것도 작성하지 않을 경우에는 백엔드에서 사용하는 변수명과 프론트엔드에서 사용하는 변수명이 일치하고,
+     *                 모든 데이터를 필수로 전달받는 변수명칭이라는 표기.
+     *                 @RequestPart("prdct" required = false) Product product
+     *                 @RequestPart(value="prdct" require = false) Product product  (위 아래 모두 동일한 형태)
+     *                 -> 이 경우에는 프론트엔드에서 변수이름이 prdct 이고, 필수로 데이터를 가져와 product 내부에 추가하지 않아도 될 때(require=false) 사용하는 표기법.
+     * @param imageFile     백엔드에서는 file 변수명으로 imageFile 로 프론트엔드에서 가져온 데이터를 전달받을 것이며,
+     *                      데이터는 required = false 필수로 들어있지 않아도 된다.
+     * @return         성공 결과 여부를
+     *                   Map< String   ,  Object >
+     *                      "success"  : boolean
+     *                      "message"  : "결과에 대한 메세지"
+     *                      "productId": 필요하다면 등록된 제품 아이디 숫자값
+     *                 으로 프론트엔드에 반환할 것.
+     *                 프론트엔드에서는
+     *                      [백엔드 성공여부 변수이름].data.success
+     *                      [백엔드 성공여부 변수이름].data.message
+     *                      [백엔드 성공여부 변수이름].data.productId
+ *                     와 같은 형태로 사용할 수 있다.
+     */
     @PostMapping
-    public ResponseEntity<Map<String, Object>> addProduct(@RequestBody Product product) {
-        log.info("✅ POST /api/product- 상품 등록: {}", product.getProductName());
+    public ResponseEntity<Map<String, Object>> addProduct(@RequestPart("product") Product product,
+                                                          @RequestPart(value="imageFile", required = false) MultipartFile imageFile) {
+        log.info("💡 POST /api/product- 상품 등록: {}", product.getProductName());
         Map<String, Object> res = new HashMap<>();
 
         try {
-            productService.insertProduct(product);
+            productService.insertProduct(product, imageFile);
             res.put("success", true);
             res.put("message", "상품이 성공적으로 등록되었습니다.");
             res.put("productId", product.getId());

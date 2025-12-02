@@ -87,7 +87,7 @@ public class MemberAPIController {
      * @param session
      * @return
      */
-    @PostMapping("/update")
+    @PutMapping("/update")
     public Map<String, Object> updateMypage(@RequestBody Map<String, Object> updateData, HttpSession session) {
         log.info("📍 회원정보 수정 요청");
         try {

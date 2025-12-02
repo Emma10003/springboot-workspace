@@ -17,17 +17,46 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+/*
+ 폴더 구조화 방식
+ /product_images/
+    /1001/              # 상품 ID로 폴더 생성
+        main.jpg        # 유저가 선택한 명칭 그대로 메인 이미지
+        detail_1.jpg    # 상세이미지 1
+        detail_2.jpg    # 상세이미지 2
+    /1002/              # 상품 ID로 폴더 생성
+        main.jpg        # 유저가 선택한 명칭 그대로 메인 이미지
+        detail_1.jpg    # 상세이미지 1
+        detail_2.jpg    # 상세이미지 2
+
+ 파일명 규칙 방식
+  /product_images/
+    P1001_main.jpg        # 유저가 선택한 명칭 그대로 메인 이미지
+    P1001_detail_1.jpg    # 상세이미지 1
+    P1001_detail_2.jpg    # 상세이미지 2
+
+ UUID 사용 여부
+     중소기업이나 내부 관리 시스템에서는 UUID를 안 쓰는 경우가 많다.
+         상품ID + 순번
+         상품코드 + 타입
+         업로드타임스탬프
+     대규모 서비스 (쿠팡, 11번가 등)
+     보안 상 상품정보 노출 방지 등의 경우 활용
+ */
 @Service
 @Slf4j
 public class FileUploadService {
 
     @Value("${file.upload.path}")
     private String uploadPath;
+    
+    @Value("${file.product.upload.path}")
+    private String productUploadPath;
 
     /**
      * 프로필 이미지 업로드
      * @param file 업로드할 이미지 파일
-     * @return 저장된 파일의 경로 (DB에 저장할 상대 경로
+     * @return 저장된 파일의 경로 (DB에 저장할 상대 경로)
      * @throws IOException 파일 처리 중 오류 발생 시 예외 처리
      */
     public String uploadProfileImage(MultipartFile file) throws IOException {
@@ -80,5 +109,70 @@ public class FileUploadService {
         // DB에서 저장할 상대경로 반환 (웹에서 접근 가능한 경로)
         // 폴더 경로는 WebConfig 의 경로명(.addResourceHandler)과 일치시킬 것!
         return "/profile_images/" + 하나_밖에_없는_파일이름;
+    }
+
+    /**
+     * 상품 이미지 - 메인 이미지 업로드
+     * @param file          업로드할 상품 이미지 파일
+     * @param productId     제품 업로드 시 상품 id
+     * @param imageType     main, detail_1, detail_2 등
+     * @return              저장된 파일의 경로(DB에 저장할 상대경로)
+     * @throws IOException  파일 처리 중 오류 발생 시 예외 처리
+*      *                     // 가져온 파일 임시저장 폴더 같은 곳에 파일 보관해두기 같은 서비스 구현 가능...
+     */
+    public String uploadProductImage(MultipartFile file, int productId, String imageType) throws IOException {
+        // 파일이 비어있는 경우
+        if(file.isEmpty()){
+            throw new IOException("업로드할 파일이 없습니다.");
+        }
+
+        // 상품별 폴더를 생성하기 위한 폴더 변수명칭 설정
+        //                  바탕화면/product_images   /   제품번호 로 폴더 생성
+        String productFolder = productUploadPath + "/" + productId;
+
+
+        // 업로드 디렉토리 생성 (생성 실패 시 에러 던지기)
+        File uploadDir = new File(productFolder);
+        if(!uploadDir.exists()){
+            boolean created = uploadDir.mkdirs();
+            if(!created){
+                throw new IOException("상품 이미지 업로드 디렉토리 생성에 실패했습니다." + productFolder);
+            }
+            log.info("✅ 상품 이미지 업로드 디렉토리 생성: {}", productFolder);
+        }
+
+        // 상품 가져오기
+        String fileName = imageType + get확장자메서드(file);  // 파일 확장자 기능을 따로 만들어서 사용
+
+        // DB에 저장할 상대 경로 반환
+        Path 저장될_파일_경로 = Paths.get(productFolder, fileName);
+
+        // 파일 저장
+        try {
+            Files.copy(file.getInputStream(), 저장될_파일_경로, StandardCopyOption.REPLACE_EXISTING);
+            log.info("✅ 상품 이미지 업로드 성공: {} -> {}", file.getOriginalFilename(), fileName);
+        } catch (Exception e) {
+            log.error("❌ 상품 이미지 저장 중 오류 발생: {}", e.getMessage());
+        }
+
+        return "/product_images/" + productId + "/" + fileName;
+    }
+
+    private String get확장자메서드(MultipartFile f) {
+        // 원본 파일명과 확장자 추출 (originalFileName)
+        String 클라이언트가업로드한파일이름 = f.getOriginalFilename();
+        // 파일 이름이 없는 경우
+        if(클라이언트가업로드한파일이름 == null || 클라이언트가업로드한파일이름.isEmpty()){
+            return "";
+        }
+
+        // 확장자 (extension), 마지막마침표의위치 (lastDotIndex)
+        String 확장자 = "";
+        int 마지막마침표의위치 = 클라이언트가업로드한파일이름 .lastIndexOf(".");  // p.i.g.png 같이 쓸 수도 있으니까
+        if(마지막마침표의위치 > 0){
+            return 클라이언트가업로드한파일이름.substring(마지막마침표의위치); // 마지막마침표부터 끝까지 확장자라는 변수에 저장 (.png, .jpg, ...)
+        }
+
+        return "";
     }
 }
