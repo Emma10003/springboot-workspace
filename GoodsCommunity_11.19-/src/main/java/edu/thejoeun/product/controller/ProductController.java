@@ -232,4 +232,6 @@ public class ProductController {
 
         }
     }
+
+    // 상품 상세정보 수정
 }

@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
 
                 // SQL 에서 rows 행 추가 결과가 1개 이상이면 insert 성공
                 // => 1개 이상 성공한 게 맞다면 을 조건으로 사용.
-                if(result > 1) {
+                if(result > 0) {
                     String imageUrl = fileUploadService.uploadProductImage(imageFile, product.getId(), "main");
 
                     // 이미지 URL을 product에 설정하고 업데이트
