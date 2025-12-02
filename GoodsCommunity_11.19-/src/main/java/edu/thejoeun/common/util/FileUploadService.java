@@ -152,7 +152,7 @@ public class FileUploadService {
 
         // 상품 가져오기
         // main - 클라이언트가 업르도한 파일 이름으로 저장하는 방법
-        String fileName = imageType + "-" + 클라이언트가_업로드한_파일이름;  // 파일 확장자 기능을 따로 만들어서 사용
+        String fileName = imageType + "-" + 클라이언트가_업로드한_파일이름 + get확장자메서드(file);  // 파일 확장자 기능을 따로 만들어서 사용
         // main.확장자명으로 저장되는 방법
         // String fileName = imageType + get확장자메서드(file);  // 파일 확장자 기능을 따로 만들어서 사용
 

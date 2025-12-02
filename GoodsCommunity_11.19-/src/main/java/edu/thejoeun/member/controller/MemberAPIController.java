@@ -59,19 +59,20 @@ public class MemberAPIController {
     // 완성
 
     @PostMapping("/signup")
-    public void saveSignup(@RequestBody Member member){
+    public void saveSignup(@RequestPart Member member,
+                           @RequestPart(required = false) MultipartFile profileImage){
       log.info("===회원가입 요청===");
       log.info("요청 데이터 - 이름 : {}, 이메일 : {}",member.getMemberName(),member.getMemberEmail());
 
       try {
-          memberService.saveMember(member);
-          log.info("회원가입 성공 - 이메일 : {}",member.getMemberEmail());
+          memberService.saveMember(member, profileImage);
+          log.info("회원가입 성공 - 이메일 : {}", member.getMemberEmail());
           /**
            * 브로드캐스트를 통해서
            * 모든 사람들에게 ㅇㅇㅇ 님이 가입했습니다. 알림 설정
            */
       } catch (Exception e){
-          log.error("회원가입 실패 - 이메일 : {}, 에러 : {}",member.getMemberEmail(),e.getMessage());
+          log.error("회원가입 실패 - 이메일 : {}, 에러 : {}",member.getMemberEmail(), e.getMessage());
       }
 
     }

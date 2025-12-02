@@ -23,6 +23,6 @@ public interface MemberMapper {
 
     void updateMember(Member member);
 
-    void updateProfileImage(String memberEmail,
-                            String memberProfileImage);
+    void updateProfileImage(@Param("memberEmail") String memberEmail,
+                            @Param("memberProfileImage") String memberProfileImage);
 }
