@@ -111,6 +111,9 @@ public class FileUploadService {
         return "/profile_images/" + 하나_밖에_없는_파일이름;
     }
 
+
+
+
     /**
      * 상품 이미지 - 메인 이미지 업로드
      * @param file          업로드할 상품 이미지 파일
