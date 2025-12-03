@@ -144,43 +144,39 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void updateProduct(Product product, MultipartFile imageFile) {
-        log.info("💡 상품 수정 시작 - ID: {}", product.getId());
+    public void updateProduct(Product newUpdateProduct, MultipartFile imageFile) {
+        log.info("💡 상품 수정 시작 - ID: {}", newUpdateProduct.getId());
 
         // 상품이 존재하는지 확인
-        Product existingProduct = productMapper.getProductById(product.getId());
+        Product existingProduct = productMapper.getProductById(newUpdateProduct.getId());
         if(existingProduct == null) {
-            log.warn("💡 수정할 상품을 찾을 수 없습니다. {}", product.getId());
+            log.warn("💡 수정할 상품을 찾을 수 없습니다. {}", newUpdateProduct.getId());
             throw new IllegalArgumentException("존재하지 않는 상품입니다.");
         }
 
         try {
-            if(imageFile != null && !imageFile.isEmpty()) {
-                if (existingProduct.getImageUrl() != null && !existingProduct.getImageUrl().isEmpty()) {
-                    String imageUrl = fileUploadService.uploadProductImage(imageFile, product.getId(), "main");
-                    product.setImageUrl(imageUrl);
-                }
+            if(imageFile != null && !imageFile.isEmpty()) {  // 변경하려는 이미지가 존재할 때
+                String imageUrl = fileUploadService.uploadProductImage(imageFile, newUpdateProduct.getId(), "main");
+                newUpdateProduct.setImageUrl(imageUrl);
             } else {
                 // 이미지를 수정하지 않은 경우 기본 이미지 유지
-                product.setImageUrl(existingProduct.getImageUrl());
+                newUpdateProduct.setImageUrl(existingProduct.getImageUrl());
             }
 
             // 유효성 검사
             // void validateProduct(Product product);
             // 메서드를 만들어, 데이터를 저장하기 전에 백엔드에서 한 번 더 유효성 검사 진행
-            int result = productMapper.updateProduct(product);
+            int result = productMapper.updateProduct(newUpdateProduct);
             if(result > 0) {
-                log.info("💡 상품 수정 완료 - ID: {}", product.getId());
+                log.info("💡 상품 수정 완료 - ID: {}", newUpdateProduct.getId());
             } else {
-                log.error("💡 상품 수정 실패 - {}", product.getId());
+                log.error("💡 상품 수정 실패 - {}", newUpdateProduct.getId());
                 throw new RuntimeException("상품 수정에 실패했습니다.");
             }
         } catch (Exception e) {
             log.error("💡 상품 수정 실패 - {}", e.getMessage());
             throw new RuntimeException();
         }
-        
-
     }
 
     @Override
