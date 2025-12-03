@@ -133,9 +133,18 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    /*
+    TODO : 새 이미지가 존재하는 경우)
+                    fileService 이용해서 폴더에 새 상품이미지 추가
+                    DB에 상품이 존재하기 때문에 존재하는 id를 기반으로 -> 새 이미지를 폴더에 업로드
+           새 이미지가 없는 경우)
+                    기존 이미지 URL 유지
+
+     FileUploadService.java 에 deleteFile 이라는 메서드를 만들어 기존 이미지 파일 삭제
+     */
     @Override
     @Transactional
-    public void updateProduct(Product product) {
+    public void updateProduct(Product product, MultipartFile imageFile) {
         log.info("💡 상품 수정 시작 - ID: {}", product.getId());
 
         // 상품이 존재하는지 확인
@@ -144,17 +153,30 @@ public class ProductServiceImpl implements ProductService {
             log.warn("💡 수정할 상품을 찾을 수 없습니다. {}", product.getId());
             throw new IllegalArgumentException("존재하지 않는 상품입니다.");
         }
-        
-        // 유효성 검사
-        // void validateProduct(Product product);
-        // 메서드를 만들어, 데이터를 저장하기 전에 백엔드에서 한 번 더 유효성 검사 진행
-        int result = productMapper.updateProduct(product);
-        if(result > 0) {
-            log.info("💡 상품 수정 완료 - ID: {}", product.getId());
-        } else {
-            log.error("💡 상품 수정 실패 - {}", product.getId());
-            throw new RuntimeException("상품 수정에 실패했습니다.");
+
+        try {
+            if (existingProduct.getImageUrl() != null && !existingProduct.getImageUrl().isEmpty()) { // 새 이미지가 있는 경우
+                String imageUrl = fileUploadService.uploadProductImage(imageFile, product.getId(), "main");
+
+                product.setImageUrl(imageUrl);
+                productMapper.updateProduct(product);
+            }
+            // 유효성 검사
+            // void validateProduct(Product product);
+            // 메서드를 만들어, 데이터를 저장하기 전에 백엔드에서 한 번 더 유효성 검사 진행
+            int result = productMapper.updateProduct(product);
+            if(result > 0) {
+                log.info("💡 상품 수정 완료 - ID: {}", product.getId());
+            } else {
+                log.error("💡 상품 수정 실패 - {}", product.getId());
+                throw new RuntimeException("상품 수정에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            log.error("💡 상품 수정 실패 - {}", e.getMessage());
+            throw new RuntimeException();
         }
+        
+
     }
 
     @Override
