@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
         // 상품이 존재하는지 확인
         Product existingProduct = productMapper.getProductById(newUpdateProduct.getId());
         if(existingProduct == null) {
-            log.warn("💡 수정할 상품을 찾을 수 없습니다. {}", newUpdateProduct.getId());
+            log.warn("⚠️ 수정할 상품을 찾을 수 없습니다. {}", newUpdateProduct.getId());
             throw new IllegalArgumentException("존재하지 않는 상품입니다.");
         }
 
@@ -170,11 +170,11 @@ public class ProductServiceImpl implements ProductService {
             if(result > 0) {
                 log.info("💡 상품 수정 완료 - ID: {}", newUpdateProduct.getId());
             } else {
-                log.error("💡 상품 수정 실패 - {}", newUpdateProduct.getId());
+                log.error("❌ 상품 수정 실패 - {}", newUpdateProduct.getId());
                 throw new RuntimeException("상품 수정에 실패했습니다.");
             }
         } catch (Exception e) {
-            log.error("💡 상품 수정 실패 - {}", e.getMessage());
+            log.error("❌ 상품 수정 실패 - {}", e.getMessage());
             throw new RuntimeException();
         }
     }
