@@ -134,13 +134,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /*
-    TODO : 새 이미지가 존재하는 경우)
-                    fileService 이용해서 폴더에 새 상품이미지 추가
-                    DB에 상품이 존재하기 때문에 존재하는 id를 기반으로 -> 새 이미지를 폴더에 업로드
-           새 이미지가 없는 경우)
-                    기존 이미지 URL 유지
-
-     FileUploadService.java 에 deleteFile 이라는 메서드를 만들어 기존 이미지 파일 삭제
+    TODO : deleteFile 메서드를 활용하여 상품 이미지 수정 시 기존 이미지 삭제 처리
      */
     @Override
     @Transactional
@@ -156,6 +150,13 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             if(imageFile != null && !imageFile.isEmpty()) {  // 변경하려는 이미지가 존재할 때
+                // 기본 이미지의 경우에는 imgUrl 이 null 일 수 있기 때문, 또는 초기 회사에서 이미지 데이터를 넣는 컬럼이 없었다가 추후에 추가되어
+                // 기존 고객들의 프로필 이미지가 없을수도 있기 때문.
+                if(existingProduct.getImageUrl() != null && !existingProduct.getImageUrl().isEmpty()) {  // 기존 DB에 이미지 경로가 있는 경우에만 아래 실행.
+                    boolean 기존이미지삭제결과 = fileUploadService.deleteFile(existingProduct.getImageUrl());  // 기존에 DB에 저장된 경로(폴더)에 존재하는 이미지 파일 삭제
+                    if(기존이미지삭제결과) log.info("✅ 기존 이미지 삭제 성공: {}", existingProduct.getImageUrl());
+                    else log.warn("⚠️ 기존 이미지 삭제 실패: {}", existingProduct.getImageUrl());
+                }
                 String imageUrl = fileUploadService.uploadProductImage(imageFile, newUpdateProduct.getId(), "main");
                 newUpdateProduct.setImageUrl(imageUrl);
             } else {

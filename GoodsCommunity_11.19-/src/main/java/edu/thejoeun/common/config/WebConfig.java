@@ -24,6 +24,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${file.product.upload.path}")
     private String productUploadPath;
 
+    @Value("${file.board.upload.path}")
+    private String boardUploadPath;
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -73,8 +76,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + productUploadPath + "/");
 
         // 게시물 이미지 폴더 수정
-        // registry.addResourceHandler("/profile_images/**")
-        //         .addResourceLocations("file:" + fileUploadPath + "/"); // 맨 끝에 "/" 안 붙이면 폴더명칭 뒤에 바로 이미지 명칭 붙어서 에러 발생
+        registry.addResourceHandler("/board_images/**")
+                .addResourceLocations("file:" + boardUploadPath + "/");
 
 
     }

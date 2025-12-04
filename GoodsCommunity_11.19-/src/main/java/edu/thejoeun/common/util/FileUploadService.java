@@ -53,6 +53,9 @@ public class FileUploadService {
     @Value("${file.product.upload.path}")
     private String productUploadPath;
 
+    @Value("${file.board.upload.path}")
+    private String boardUploadPath;
+
     /**
      * 프로필 이미지 업로드
      * @param file 업로드할 이미지 파일
@@ -125,7 +128,7 @@ public class FileUploadService {
      */
     public String uploadProductImage(MultipartFile file, int productId, String imageType) throws IOException {
         // 파일이 비어있는 경우
-        if(file.isEmpty()){
+        if(file.isEmpty() || file == null){
             throw new IOException("업로드할 파일이 없습니다.");
         }
 
@@ -152,7 +155,7 @@ public class FileUploadService {
 
         // 상품 가져오기
         // main - 클라이언트가 업르도한 파일 이름으로 저장하는 방법
-        String fileName = imageType + "-" + 클라이언트가_업로드한_파일이름 + get확장자메서드(file);  // 파일 확장자 기능을 따로 만들어서 사용
+        String fileName = imageType + "-" + 클라이언트가_업로드한_파일이름;  // 파일 확장자 기능을 따로 만들어서 사용
         // main.확장자명으로 저장되는 방법
         // String fileName = imageType + get확장자메서드(file);  // 파일 확장자 기능을 따로 만들어서 사용
 
@@ -268,4 +271,54 @@ public class FileUploadService {
     // 폴더 내부에 파일이 존재하면 폴더만 삭제한다는 개념이 아님!!
     // 비어있는 상품 폴더 삭제
     // 여러 파일 한 번에 삭제
+
+    /**
+     * 게시물 이미지 업로드
+     * @param file          업로드할 게시물 이미지 파일
+     * @param boardId       게시물 아이디
+     * @param imageType     main 또는 detail 이미지
+     * @return              저장된 파일의 경로 (DB에 저장할 상대경로)
+     * @throws IOException  파일 처리 중 오류 발생 시 예외 처리
+     */
+    public String uploadBoardImage(MultipartFile file, int boardId, String imageType) throws IOException {
+        if(file == null || file.isEmpty()) throw new IOException("업로드할 파일이 없습니다.");
+
+        // 게시물별 폴더 생성: /board_images/1001 처럼 게시물 번호별 폴더 생성
+        // 루트 폴더 + 게시물 번호 로 폴더 이름 변수 생성
+        String boardFolder = boardUploadPath + "/" + boardId;
+
+        // 위에서 만든 폴더 이름으로 File 객체 생성
+        File uploadDir = new File(boardFolder);
+        if(!uploadDir.exists()){
+            // 해당 폴더가 존재하지 않으면 새로 생성
+            boolean created = uploadDir.mkdirs();
+            if(!created){  // 생성 실패 시 예외 던지기
+                throw new IOException("게시물 이미지 디렉토리 생성에 실패했습니다 : " + boardFolder);
+            }
+            log.info("✅ 게시물 이미지 디렉토리 생성: {}", boardFolder);
+        }
+
+        String client_upload_file = file.getOriginalFilename();  // 사용자가 선택한 이미지의 원본 파일명 (확장자 포함)
+        if(client_upload_file == null || client_upload_file.isEmpty()){
+            throw new IOException("파일 이름이 유효하지 않습니다.");
+        }
+
+        // 로컬 폴더(회사 컴퓨터)에 저장할 이미지 파일명 변수 만들기
+        String client_upload_fileName = imageType + "-" + client_upload_file;
+
+        // DB에 String 으로 저장할 파일의 상대경로 반환
+        Path save_to_path = Paths.get(boardFolder, client_upload_fileName);
+
+        // 파일 실제로 저장
+        try {
+            Files.copy(file.getInputStream(), save_to_path, StandardCopyOption.REPLACE_EXISTING);
+            log.info("✅ 게시물 이미지 업로드 성공: {} -> {}", file.getOriginalFilename(), client_upload_fileName);
+        } catch(Exception e) {
+            log.error("❌ 게시물 이미지 저장 중 오류 발생: {}", e.getMessage());
+            throw new IOException("게시물 이미지 저장에 실패했습니다 : " + e.getMessage());
+        }
+
+        // DB에 저장할 이미지 경로 반환
+        return "/board_images/" + boardId + "/" + client_upload_file;
+    }
 }

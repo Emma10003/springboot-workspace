@@ -143,7 +143,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateProduct(@PathVariable int id,
                                                              // 데이터가 하나일 때는 기본값이 value.
-                                                             @RequestPart Product product,
+                                                             @RequestPart("product") Product product,
                                                              // 매개변수 데이터가 2가지 이상일 때는 각각 어떤 속성을 참조하는지 작성해야 함.
                                                              @RequestPart(value="imageFile", required=false) MultipartFile imageFile) {
         log.info("✅ PUT /api/product/{} - 상품 수정", id);
