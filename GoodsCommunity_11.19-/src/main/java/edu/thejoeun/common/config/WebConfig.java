@@ -78,8 +78,6 @@ public class WebConfig implements WebMvcConfigurer {
         // 게시물 이미지 폴더 수정
         registry.addResourceHandler("/board_images/**")
                 .addResourceLocations("file:" + boardUploadPath + "/");
-
-
     }
 }
 

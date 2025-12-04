@@ -37,4 +37,11 @@ public interface BoardMapper {
      * @param id
      */
     void updateViewCount(int id);
+
+    /**
+     * 게시물의 이미지 데이터 업데이트
+     * @param board id와 mainImage, detailImage 활용할 것
+     *              int id, String board_main_image, String board_detail_image 와 같은 형식으로도 매개변수 작성 가능.
+     */
+    void updateBoardImages(Board board);
 }

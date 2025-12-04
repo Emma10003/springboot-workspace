@@ -38,18 +38,17 @@
         VALUES (#{title}, #{content}, #{writer}, #{boardMainImage}, #{boardDetailImage})
     </insert>
 
-    <update id="updateBoard" parameterType="Board">
-        UPDATE board
-        SET title = #{title},
-            content = #{content},
-            writer = #{writer},
-            board_image = #{boardImage}
-        WHERE id = #{id}
-    </update>
-
     <update id="updateViewCount" parameterType="int">
         UPDATE  board
         SET view_count = view_count + 1
         WHERE id = #{id}
     </update>
+
+    <update id="updateBoardImages" parameterType="Board">
+        UPDATE board
+        SET board_main_image = #{boardMainImage},
+            board_detail_image = #{boardDetailImage}
+        WHERE id = #{id}
+    </update>
+
 </mapper>
